@@ -54,14 +54,22 @@ export async function callDeepSeek(
     code.length > 4000 ? code.slice(0, 4000) + '\n...(代码过长已截断)' : code
   )
 
+  // 开发环境用 Vite 代理，生产环境直接调 DeepSeek API
+  const isDev = typeof window !== 'undefined' && window.location.hostname === 'localhost'
+  const apiUrl = isDev
+    ? '/api/deepseek/chat/completions'
+    : 'https://api.deepseek.com/chat/completions'
+  const headers: Record<string, string> = { 'Content-Type': 'application/json' }
+  if (!isDev) {
+    headers['Authorization'] = `Bearer ${import.meta.env.VITE_DEEPSEEK_API_KEY}`
+  }
+
   try {
     console.log('[DeepSeek] Sending request, code length:', code.length)
 
-    const response = await fetch('/api/deepseek/chat/completions', {
+    const response = await fetch(apiUrl, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers,
       body: JSON.stringify({
         model: 'deepseek-v4-flash',
         messages: [
