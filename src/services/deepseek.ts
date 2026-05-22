@@ -59,9 +59,10 @@ export async function callDeepSeek(
   const apiUrl = isDev
     ? '/api/deepseek/chat/completions'
     : 'https://api.deepseek.com/chat/completions'
+  const apiKey = isDev ? '' : 'sk-e83db6ca030b47168639dc1cde218b07'
   const headers: Record<string, string> = { 'Content-Type': 'application/json' }
   if (!isDev) {
-    headers['Authorization'] = `Bearer ${import.meta.env.VITE_DEEPSEEK_API_KEY}`
+    headers['Authorization'] = `Bearer ${apiKey}`
   }
 
   try {
